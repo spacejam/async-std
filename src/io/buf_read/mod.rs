@@ -43,11 +43,11 @@ cfg_if! {
 pub trait BufRead {
     /// Tells this buffer that `amt` bytes have been consumed from the buffer, so they should no
     /// longer be returned in calls to `read`.
-    fn consume(self: Pin<&mut Self>, amt: usize)
+    fn consume(&mut self, amt: usize)
     where
-        Self: AsyncBufRead,
+        Self: AsyncBufRead + Unpin,
     {
-        AsyncBufRead::consume(self, amt)
+        AsyncBufRead::consume(Pin::new(self), amt)
     }
 
     /// Reads all bytes into `buf` until the delimiter `byte` or EOF is reached.
